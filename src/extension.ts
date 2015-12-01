@@ -12,7 +12,11 @@ class Dependency{
 	}
 	install(){
 		outputChannel.appendLine('Installing bower package '+this.packageName+' version '+this.packageVersion);
-		let p = cp.exec('bower install '+this.packageName+'#'+this.packageVersion, { cwd: vscode.workspace.rootPath, env: process.env }); 
+		var commandString : string = 'bower install '+this.packageName;
+		if(this.packageVersion!="*"){
+			commandString+='#'+this.packageVersion;
+		}
+		let p = cp.exec(commandString, { cwd: vscode.workspace.rootPath, env: process.env }); 
 		p.stderr.on('data', (data: string) => { 
 			outputChannel.append(data); 
 		}); 
