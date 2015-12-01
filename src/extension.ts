@@ -139,7 +139,8 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	 }
 	getCurrentDependencies(false);
-	var watcher = vscode.workspace.createFileSystemWatcher(path);		
+	var watcher = vscode.workspace.createFileSystemWatcher(path);	
+	context.subscriptions.push(watcher);	
 	watcher.onDidChange(function(e){		
 		console.log('Bower Watcher: "bower.json" file changed');
 		getCurrentDependencies(true);					
