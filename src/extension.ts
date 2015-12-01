@@ -117,8 +117,10 @@ class BowerParser{
 
 export function activate(context: vscode.ExtensionContext) {
 	outputChannel = vscode.window.createOutputChannel('bower');
+	context.subscriptions.push(outputChannel);
 	console.log('Bower Watcher: Detected your "bower.json" file correctly.');
 	var currentBowerDependencies : Dependencies = new Dependencies();
+	context.subscriptions.push(currentBowerDependencies);
 	var path = vscode.workspace.rootPath+"/bower.json";
 	 var getCurrentDependencies = function(updateproject:boolean){
 		try{
