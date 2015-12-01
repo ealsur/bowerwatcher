@@ -1,17 +1,26 @@
 {
 	"name": "bowerwatcher",
-	"displayName": "bowerwatcher",
+	"displayName": "Bower package watcher",
 	"description": "Keeps your Bower dependencies fresh and updated with your bower.json file",
 	"version": "0.0.1",
 	"publisher": "ealsur",
 	"engines": {
 		"vscode": "^0.10.1"
 	},
+	"galleryBanner": {
+        "color": "#FFFFFF",
+        "theme": "light"
+    },
+	"icon": "images/icon.svg",
+	"repository": {
+        "type": "git",
+        "url": "https://github.com/ealsur/bowerwatcher.git"
+    },
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.sayHello"
+		"workspaceContains:bower.json"	
 	],
 	"main": "./out/src/extension",
 	"contributes": {
