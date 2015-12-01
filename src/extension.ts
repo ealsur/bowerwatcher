@@ -1,4 +1,7 @@
+import * as cp from 'child_process';
 import * as vscode from 'vscode'; 
+
+let outputChannel: vscode.OutputChannel;
 
 class Dependency{
 	packageName:string;
@@ -7,7 +10,27 @@ class Dependency{
 		this.packageName = name;
 		this.packageVersion = version;
 	}
-	resolve():boolean{
+	install(){
+		outputChannel.appendLine('Installing bower package '+this.packageName+' version '+this.packageVersion);
+		let p = cp.exec('bower install '+this.packageName+'#'+this.packageVersion, { cwd: vscode.workspace.rootPath, env: process.env }); 
+		p.stderr.on('data', (data: string) => { 
+			outputChannel.append(data); 
+		}); 
+		p.stdout.on('data', (data: string) => { 
+			outputChannel.append(data); 
+		}); 
+
+		return;
+	}
+	uninstall(){
+		outputChannel.appendLine('Uninstalling bower package '+this.packageName+' version '+this.packageVersion);
+		let p = cp.exec('bower uninstall '+this.packageName, { cwd: vscode.workspace.rootPath, env: process.env }); 
+		p.stderr.on('data', (data: string) => { 
+			outputChannel.append(data); 
+		}); 
+		p.stdout.on('data', (data: string) => { 
+			outputChannel.append(data); 
+		});
 		return;
 	}
 }
@@ -43,12 +66,17 @@ class Dependencies{
 		return dep;
 	}
 	process(updateproject:boolean, addedDependencies:Dependency[], removedDependencies:Dependency[]){
-		addedDependencies.forEach(d=>{
-			this.add(d)
-		});
 		removedDependencies.forEach(d=>{
-			this.remove(d)
+			this.remove(d);
+			if(updateproject){ d.uninstall(); }
 		});
+		addedDependencies.forEach(d=>{
+			this.add(d);
+			if(updateproject){ d.install(); }
+		});
+	}
+	dispose(){
+		this.dependencies.length = 0;
 	}
 }
 
@@ -88,6 +116,7 @@ class BowerParser{
 } 
 
 export function activate(context: vscode.ExtensionContext) {
+	outputChannel = vscode.window.createOutputChannel('bower');
 	console.log('Bower Watcher: Detected your "bower.json" file correctly.');
 	var currentBowerDependencies : Dependencies = new Dependencies();
 	var path = vscode.workspace.rootPath+"/bower.json";
